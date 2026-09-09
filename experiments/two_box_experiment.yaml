@@ -1,0 +1,149 @@
+experiment:
+  id: "two_box_sorting"
+  name: "Two-Box Sorting Experiment"
+  description: "Astronaut extracts red and yellow boxes from a container and transfers them to a target rack."
+  author: "ISRO Bio-Astronautics Division"
+  version: "1.0.0"
+
+objects:
+  - id: "main_container"
+    name: "Main Payload Container"
+  - id: "red_box"
+    name: "Red Experiment Box"
+  - id: "yellow_box"
+    name: "Yellow Experiment Box"
+  - id: "target_area"
+    name: "Target Storage Rack"
+
+steps:
+  - id: 1
+    name: "Observe Payload Container"
+    expected_object: "main_container"
+    expected_activity: "OPEN_CONTAINER"
+    expected_interaction: "APPROACHING"
+    next_step: 2
+    timeout_sec: 30.0
+    confidence_threshold: 0.70
+    guidance: "Position yourself facing the main payload container."
+    voice_alert: "Experiment started. Next step: access the payload container."
+
+  - id: 2
+    name: "Access Container"
+    expected_object: "main_container"
+    expected_activity: "OPEN_CONTAINER"
+    expected_interaction: "CONTACT"
+    next_step: 3
+    timeout_sec: 30.0
+    confidence_threshold: 0.75
+    guidance: "Open the main container access latch."
+    voice_alert: "Container accessed. Identify the red box inside."
+
+  - id: 3
+    name: "Identify Red Box"
+    expected_object: "red_box"
+    expected_activity: "IDENTIFY_OBJECT"
+    expected_interaction: "NEAR"
+    next_step: 4
+    timeout_sec: 25.0
+    confidence_threshold: 0.75
+    guidance: "Locate and confirm the red experiment box."
+    voice_alert: "Red box identified. Reach toward the red box."
+
+  - id: 4
+    name: "Reach Red Box"
+    expected_object: "red_box"
+    expected_activity: "REACH"
+    expected_interaction: "APPROACHING"
+    next_step: 5
+    timeout_sec: 20.0
+    confidence_threshold: 0.75
+    guidance: "Reach hand toward the red box."
+    voice_alert: "Next step: grasp the red box."
+
+  - id: 5
+    name: "Grasp Red Box"
+    expected_object: "red_box"
+    expected_activity: "GRASP"
+    expected_interaction: "GRASPING"
+    next_step: 6
+    timeout_sec: 20.0
+    confidence_threshold: 0.80
+    guidance: "Firmly grasp the red experiment box."
+    voice_alert: "Red box grasped. Move it to the target rack."
+
+  - id: 6
+    name: "Move Red Box"
+    expected_object: "red_box"
+    expected_activity: "MOVE"
+    expected_interaction: "MOVING"
+    next_step: 7
+    timeout_sec: 30.0
+    confidence_threshold: 0.80
+    guidance: "Transfer the red box to the designated target area."
+    voice_alert: "Red box moving. Place it into the target slot."
+
+  - id: 7
+    name: "Place Red Box"
+    expected_object: "red_box"
+    expected_activity: "PLACE"
+    expected_interaction: "PLACED"
+    next_step: 8
+    timeout_sec: 20.0
+    confidence_threshold: 0.80
+    guidance: "Secure the red box into the target slot."
+    voice_alert: "Red box placed successfully. Locate the yellow box."
+
+  - id: 8
+    name: "Identify Yellow Box"
+    expected_object: "yellow_box"
+    expected_activity: "IDENTIFY_OBJECT"
+    expected_interaction: "NEAR"
+    next_step: 9
+    timeout_sec: 25.0
+    confidence_threshold: 0.75
+    guidance: "Locate and confirm the yellow experiment box."
+    voice_alert: "Yellow box identified. Reach toward the yellow box."
+
+  - id: 9
+    name: "Grasp Yellow Box"
+    expected_object: "yellow_box"
+    expected_activity: "GRASP"
+    expected_interaction: "GRASPING"
+    next_step: 10
+    timeout_sec: 20.0
+    confidence_threshold: 0.80
+    guidance: "Grasp the yellow experiment box."
+    voice_alert: "Yellow box grasped. Move it to the target rack."
+
+  - id: 10
+    name: "Move Yellow Box"
+    expected_object: "yellow_box"
+    expected_activity: "MOVE"
+    expected_interaction: "MOVING"
+    next_step: 11
+    timeout_sec: 30.0
+    confidence_threshold: 0.80
+    guidance: "Transfer yellow box to the target area."
+    voice_alert: "Yellow box moving. Place it into the target slot."
+
+  - id: 11
+    name: "Place Yellow Box"
+    expected_object: "yellow_box"
+    expected_activity: "PLACE"
+    expected_interaction: "PLACED"
+    next_step: 12
+    timeout_sec: 20.0
+    confidence_threshold: 0.80
+    guidance: "Secure yellow box in target slot."
+    voice_alert: "Yellow box placement confirmed."
+
+  - id: 12
+    name: "Experiment Complete"
+    expected_object: "target_area"
+    expected_activity: "COMPLETE"
+    expected_interaction: "RELEASED"
+    next_step: 12
+    timeout_sec: 10.0
+    confidence_threshold: 0.80
+    guidance: "All experiment steps completed successfully."
+    voice_alert: "Two-Box Sorting Experiment completed successfully."

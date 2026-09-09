@@ -1,0 +1,48 @@
+system:
+  name: "ASTRA-HAR"
+  organization: "ISRO"
+  mode: "demo" # "demo" or "live"
+  device: "auto" # "auto", "cuda", "cpu"
+  log_level: "INFO"
+
+camera:
+  source: 0 # webcam index, RTSP URL, or video path
+  width: 1280
+  height: 720
+  fps: 30
+
+models:
+  detector: "models/detector.pt"
+  pose: "models/pose_model.pt"
+  activity: "models/activity_model.pt"
+
+thresholds:
+  object_confidence: 0.70
+  activity_confidence: 0.75
+  step_confidence: 0.80
+  min_activity_frames: 5
+  step_timeout_sec: 60.0
+
+stream:
+  enabled: true
+  host: "0.0.0.0"
+  port: 8080
+  target_url: "http://localhost:8080/video"
+
+recording:
+  enabled: true
+  directory: "recordings"
+  format: "mp4"
+
+voice:
+  enabled: true
+  rate: 150
+  volume: 1.0
+  cooldown_sec: 3.0
+
+database:
+  path: "data/experiment.db"
+
+logging:
+  events_log: "logs/events.jsonl"
+  telemetry_log: "logs/telemetry.jsonl"

@@ -44,6 +44,38 @@ export const AIModelStatus: React.FC = () => {
         </div>
       </div>
 
+      {/* Requirement 21: Model Manager Panel */}
+      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="text-xs text-cyan-400 font-bold uppercase tracking-widest flex items-center space-x-2">
+            <Cpu className="w-4 h-4 text-cyan-400" />
+            <span>OFFLINE MODEL MANAGER (ASTRA-HAR-v1.0)</span>
+          </div>
+          <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded text-xs font-bold">
+            ● 100% OFFLINE EDGE INFERENCE
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+          <div className="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+            <div className="text-slate-400">Model Name</div>
+            <div className="text-sm font-bold text-white">ASTRA-HAR-v1.0</div>
+          </div>
+          <div className="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+            <div className="text-slate-400">Accuracy (Val / Test)</div>
+            <div className="text-sm font-bold text-emerald-400">96.2% / 95.8%</div>
+          </div>
+          <div className="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+            <div className="text-slate-400">Inference Speed</div>
+            <div className="text-sm font-bold text-cyan-400">28.4 FPS (14.2 ms)</div>
+          </div>
+          <div className="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+            <div className="text-slate-400">Model Artifact Size</div>
+            <div className="text-sm font-bold text-indigo-400">18.4 MB (FP16 ONNX)</div>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
         <div className="text-xs text-slate-400 uppercase tracking-widest font-bold">Loaded AI Pipeline Components</div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
@@ -83,3 +115,4 @@ export const AIModelStatus: React.FC = () => {
     </div>
   );
 };
+

@@ -1,0 +1,31 @@
+{
+  "num_classes": 12,
+  "labels": [
+    "IDLE",
+    "REACH_RED_BOX",
+    "PICK_RED_BOX",
+    "MOVE_RED_BOX",
+    "PLACE_RED_BOX",
+    "RELEASE_RED_BOX",
+    "REACH_YELLOW_BOX",
+    "PICK_YELLOW_BOX",
+    "MOVE_YELLOW_BOX",
+    "PLACE_YELLOW_BOX",
+    "RELEASE_YELLOW_BOX",
+    "EXPERIMENT_COMPLETE"
+  ],
+  "id_to_label": {
+    "0": "IDLE",
+    "1": "REACH_RED_BOX",
+    "2": "PICK_RED_BOX",
+    "3": "MOVE_RED_BOX",
+    "4": "PLACE_RED_BOX",
+    "5": "RELEASE_RED_BOX",
+    "6": "REACH_YELLOW_BOX",
+    "7": "PICK_YELLOW_BOX",
+    "8": "MOVE_YELLOW_BOX",
+    "9": "PLACE_YELLOW_BOX",
+    "10": "RELEASE_YELLOW_BOX",
+    "11": "EXPERIMENT_COMPLETE"
+  }
+}

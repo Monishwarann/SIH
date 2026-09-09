@@ -1,0 +1,11 @@
+{
+  "pose_normalization": "BoundingBox_Center_Relative",
+  "temporal_window_length": 15,
+  "input_features": [
+    "keypoint_xy",
+    "hand_velocity",
+    "hand_object_dist",
+    "interaction_state"
+  ],
+  "fps_target": 30
+}

@@ -200,7 +200,7 @@ export const DatasetManagement: React.FC = () => {
               className="bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 px-6 rounded-lg text-xs flex items-center space-x-2 shadow-[0_0_15px_rgba(6,182,212,0.25)]"
             >
               <CheckCircle className="w-4 h-4" />
-              <span>SAVE & PROCEED TO SAMPLE RECORDING</span>
+              <span>SAVE & PROCEED TO SAMPLE RECORDING.</span>
             </button>
           </div>
         </div>

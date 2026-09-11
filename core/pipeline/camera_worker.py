@@ -15,6 +15,7 @@ from core.sequence.sequence_engine import SequenceEngine
 from core.sequence.error_detector import ErrorDetector
 from backend.streaming.stream_manager import stream_manager
 from backend.voice.voice_engine import voice_manager
+from backend.recording.video_recorder import video_recorder
 
 logger = logging.getLogger("ASTRA-HAR.CameraWorker")
 
@@ -150,8 +151,10 @@ class CameraWorker:
             # 10. Draw Live Vision HUD Annotations on Camera Frame
             annotated_frame = self._draw_hud_overlay(frame, person_bbox, objects, keypoints, hand_pos, interactions, stable_activity, step_info)
 
-            # 11. Push frame to StreamManager (/video endpoint)
+            # 11. Push frame to StreamManager (/video endpoint) & VideoRecorder
             stream_manager.update_frame(annotated_frame)
+            if video_recorder.is_recording:
+                video_recorder.write_frame(annotated_frame)
 
             # Maintain ~30 FPS loop rate
             elapsed = time.time() - start_frame_time

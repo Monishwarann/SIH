@@ -7,12 +7,25 @@ interface RealtimeStore {
   wsConnected: boolean;
   wsError: string | null;
   scenario: string;
+  isSessionRunning: boolean;
+  isSessionPaused: boolean;
+  isRecording: boolean;
 
   setActiveTab: (tab: string) => void;
   setScenario: (scenario: string) => void;
   updateState: (newState: Partial<SystemState>) => void;
   connectWebSocket: () => void;
+
+  startSession: () => Promise<void>;
+  pauseSession: () => Promise<void>;
+  resetStep: () => Promise<void>;
+  exportLogs: () => Promise<any>;
+  startLiveRecording: () => Promise<void>;
+  stopLiveRecording: () => Promise<any>;
+  fetchRecordings: () => Promise<any[]>;
 }
+
+const API_BASE = "http://localhost:8000";
 
 const defaultState: SystemState = {
   schema_version: "1.0",
@@ -117,10 +130,120 @@ export const useRealtimeStore = create<RealtimeStore>((set, get) => ({
   wsConnected: false,
   wsError: null,
   scenario: "normal",
+  isSessionRunning: true,
+  isSessionPaused: false,
+  isRecording: false,
 
   setActiveTab: (tab: string) => set({ activeTab: tab }),
   setScenario: (scenario: string) => set({ scenario }),
   updateState: (newState: Partial<SystemState>) => set((s) => ({ state: { ...s.state, ...newState } })),
+
+  startSession: async () => {
+    try {
+      await fetch(`${API_BASE}/api/experiment/start`, { method: "POST" });
+    } catch (e) {
+      console.warn("Backend REST API offline, updating local state", e);
+    }
+    set((s) => ({
+      isSessionRunning: true,
+      isSessionPaused: false,
+      state: {
+        ...s.state,
+        experiment: {
+          ...s.state.experiment,
+          status: "RUNNING"
+        }
+      }
+    }));
+  },
+
+  pauseSession: async () => {
+    const isPaused = get().isSessionPaused;
+    try {
+      if (!isPaused) {
+        await fetch(`${API_BASE}/api/experiment/stop`, { method: "POST" });
+      } else {
+        await fetch(`${API_BASE}/api/experiment/start`, { method: "POST" });
+      }
+    } catch (e) {
+      console.warn("Backend REST API offline, updating local state", e);
+    }
+    set((s) => ({
+      isSessionPaused: !isPaused,
+      state: {
+        ...s.state,
+        experiment: {
+          ...s.state.experiment,
+          status: isPaused ? "RUNNING" : "PAUSED"
+        }
+      }
+    }));
+  },
+
+  resetStep: async () => {
+    try {
+      await fetch(`${API_BASE}/api/experiment/reset`, { method: "POST" });
+    } catch (e) {
+      console.warn("Backend REST API offline, updating local state", e);
+    }
+    set((s) => ({
+      isSessionPaused: false,
+      state: {
+        ...s.state,
+        experiment: {
+          ...s.state.experiment,
+          current_step: 1,
+          progress: 8.3,
+          step_name: "Observe Payload Container",
+          status: "RUNNING"
+        },
+        active_alert: null
+      }
+    }));
+  },
+
+  exportLogs: async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/logs/export`);
+      return await res.json();
+    } catch (e) {
+      console.warn("Failed to export logs from backend", e);
+      return { status: "OFFLINE_FALLBACK" };
+    }
+  },
+
+  startLiveRecording: async () => {
+    try {
+      await fetch(`${API_BASE}/api/recording/live/start`, { method: "POST" });
+    } catch (e) {
+      console.warn("Backend offline when starting recording", e);
+    }
+    set({ isRecording: true });
+  },
+
+  stopLiveRecording: async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/recording/live/stop`, { method: "POST" });
+      const data = await res.json();
+      set({ isRecording: false });
+      return data;
+    } catch (e) {
+      console.warn("Backend offline when stopping recording", e);
+      set({ isRecording: false });
+      return { status: "OFFLINE" };
+    }
+  },
+
+  fetchRecordings: async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/recordings/list`);
+      const data = await res.json();
+      return data.recordings || [];
+    } catch (e) {
+      console.warn("Failed to fetch recordings", e);
+      return [];
+    }
+  },
 
   connectWebSocket: () => {
     const wsUrl = `ws://${window.location.hostname}:8000/ws/experiment`;

@@ -3,7 +3,7 @@ import { useRealtimeStore } from "../realtime/realtimeStore";
 import { Play, Pause, RotateCcw, AlertTriangle, Clock, ShieldCheck, Activity, Cpu, CheckCircle } from "lucide-react";
 
 export const Dashboard: React.FC = () => {
-  const { state } = useRealtimeStore();
+  const { state, isSessionRunning, isSessionPaused, startSession, pauseSession, resetStep } = useRealtimeStore();
 
   return (
     <div className="p-6 space-y-6 font-mono">
@@ -163,17 +163,34 @@ export const Dashboard: React.FC = () => {
           </div>
 
           {/* Interactive Control Buttons */}
-          <div className="space-y-2 pt-2 border-t border-slate-800">
-            <button className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-lg flex items-center justify-center space-x-2 transition shadow-[0_0_15px_rgba(6,182,212,0.25)]">
-              <Play className="w-4 h-4" />
-              <span>START EXPERIMENT SESSION</span>
+          <div className="space-y-2 pt-2 border-t border-slate-800 font-mono">
+            <button
+              onClick={() => startSession()}
+              className={`w-full font-bold py-2.5 rounded-lg flex items-center justify-center space-x-2 transition cursor-pointer ${
+                isSessionRunning && !isSessionPaused
+                  ? "bg-cyan-500 hover:bg-cyan-400 text-black shadow-[0_0_20px_rgba(6,182,212,0.4)]"
+                  : "bg-cyan-600 hover:bg-cyan-500 text-white shadow-[0_0_15px_rgba(6,182,212,0.25)]"
+              }`}
+            >
+              <Play className="w-4 h-4 fill-current" />
+              <span>{isSessionRunning && !isSessionPaused ? "SESSION ACTIVE" : "START EXPERIMENT SESSION"}</span>
             </button>
             <div className="grid grid-cols-2 gap-2">
-              <button className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-2 rounded-lg flex items-center justify-center space-x-1 text-xs">
-                <Pause className="w-3.5 h-3.5" />
-                <span>PAUSE</span>
+              <button
+                onClick={() => pauseSession()}
+                className={`font-semibold py-2 rounded-lg flex items-center justify-center space-x-1.5 text-xs transition cursor-pointer ${
+                  isSessionPaused
+                    ? "bg-amber-500/20 border border-amber-500/50 text-amber-300 hover:bg-amber-500/30"
+                    : "bg-slate-800 hover:bg-slate-700 text-slate-200"
+                }`}
+              >
+                {isSessionPaused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
+                <span>{isSessionPaused ? "RESUME" : "PAUSE"}</span>
               </button>
-              <button className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-2 rounded-lg flex items-center justify-center space-x-1 text-xs">
+              <button
+                onClick={() => resetStep()}
+                className="bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 font-semibold py-2 rounded-lg flex items-center justify-center space-x-1.5 text-xs transition cursor-pointer"
+              >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>RESET STEP</span>
               </button>

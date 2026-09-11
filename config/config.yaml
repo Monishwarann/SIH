@@ -41,7 +41,13 @@ voice:
   cooldown_sec: 3.0
 
 database:
+  engine: "postgresql" # "postgresql" or "sqlite"
   path: "data/experiment.db"
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "password"
+  dbname: "astra_har"
 
 logging:
   events_log: "logs/events.jsonl"

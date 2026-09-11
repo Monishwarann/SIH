@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useRealtimeStore } from "../realtime/realtimeStore";
-import { Radio, Cpu, Camera } from "lucide-react";
+import { Radio, Cpu, Camera, Video, Square } from "lucide-react";
 
 export const Header: React.FC = () => {
-  const { state, wsConnected, scenario, setScenario } = useRealtimeStore();
+  const { state, wsConnected, scenario, setScenario, isRecording, startLiveRecording, stopLiveRecording } = useRealtimeStore();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -15,8 +15,13 @@ export const Header: React.FC = () => {
     <header className="bg-slate-900/90 border-b border-slate-800 backdrop-blur px-6 py-3 flex items-center justify-between sticky top-0 z-50">
       {/* Title & Organization Branding */}
       <div className="flex items-center space-x-4">
-        <div className="bg-cyan-950 border border-cyan-500/30 text-cyan-400 p-2 rounded-lg flex items-center justify-center font-bold tracking-widest text-lg shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-          ISRO
+        <div className="flex items-center space-x-2">
+          <div className="bg-cyan-950 border border-cyan-500/30 text-cyan-400 p-2 rounded-lg flex items-center justify-center font-bold tracking-widest text-lg shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+            ISRO
+          </div>
+          <div className="bg-indigo-950/80 border border-indigo-500/30 text-indigo-400 px-2.5 py-1 rounded-lg flex items-center justify-center font-bold tracking-wider text-xs shadow-[0_0_15px_rgba(99,102,241,0.2)] font-mono">
+            MSEC
+          </div>
         </div>
         <div>
           <div className="flex items-center space-x-2">
@@ -33,6 +38,35 @@ export const Header: React.FC = () => {
 
       {/* Demo Scenario Selector & Real-Time Indicators */}
       <div className="flex items-center space-x-6 font-mono text-xs">
+        {/* Record Live Session Button */}
+        <button
+          onClick={async () => {
+            if (!isRecording) {
+              await startLiveRecording();
+            } else {
+              const res = await stopLiveRecording();
+              alert(`Recording saved as ${res.filename || 'experiment_session.mp4'}! Available in Session Replay Studio.`);
+            }
+          }}
+          className={`px-3 py-1.5 rounded-lg flex items-center space-x-2 font-bold transition cursor-pointer ${
+            isRecording
+              ? "bg-rose-600 hover:bg-rose-500 text-white animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.4)]"
+              : "bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-rose-300"
+          }`}
+        >
+          {isRecording ? (
+            <>
+              <Square className="w-3.5 h-3.5 fill-current text-white" />
+              <span>STOP REC [LIVE]</span>
+            </>
+          ) : (
+            <>
+              <Video className="w-3.5 h-3.5 text-rose-400" />
+              <span>RECORD LIVE</span>
+            </>
+          )}
+        </button>
+
         <div className="flex items-center space-x-2 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-md">
           <span className="text-slate-400">Scenario:</span>
           <select

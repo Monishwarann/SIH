@@ -1,9 +1,11 @@
 import asyncio
 import time
 import logging
+import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from core.realtime.realtime_state import realtime_state
 from core.pipeline.scenario_engine import ScenarioEngine
@@ -13,6 +15,7 @@ from backend.streaming.stream_manager import stream_manager
 from backend.database.db_service import db_service
 from backend.logging.logger_service import logger_service
 from backend.voice.voice_engine import voice_manager
+from backend.recording.video_recorder import video_recorder
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -32,6 +35,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount recordings static folder for video replay streaming
+os.makedirs("recordings", exist_ok=True)
+app.mount("/recordings", StaticFiles(directory="recordings"), name="recordings")
 
 scenario_engine = ScenarioEngine(scenario_name="normal")
 execution_mode = "live"  # "live" for laptop webcam, "demo" for scenario generator
@@ -77,8 +84,13 @@ def get_system_status():
         "ram_usage_gb": realtime_state.ram_usage_gb,
         "gpu_usage": realtime_state.gpu_usage,
         "vram_usage_gb": realtime_state.vram_usage_gb,
-        "mission_health_score": realtime_state.mission_health_score
+        "mission_health_score": realtime_state.mission_health_score,
+        "database": db_service.get_db_info()
     }
+
+@app.get("/api/database/status")
+def get_database_status():
+    return db_service.get_db_info()
 
 @app.get("/api/experiment/status")
 def get_experiment_status():
@@ -200,6 +212,43 @@ def set_video_source(data: dict):
     camera_worker.camera_source = source
     camera_worker.start()
     return {"status": "SOURCE_CHANGED", "source": source}
+
+@app.post("/api/recording/live/start")
+def start_live_recording():
+    video_recorder.start_recording(realtime_state.session_id)
+    voice_manager.speak("Session recording started.")
+    return {"status": "RECORDING_STARTED", "filepath": video_recorder.output_filepath}
+
+@app.post("/api/recording/live/stop")
+def stop_live_recording():
+    filepath = video_recorder.stop_recording()
+    filename = os.path.basename(filepath) if filepath else ""
+    voice_manager.speak("Session recording saved.")
+    return {
+        "status": "RECORDING_STOPPED",
+        "filepath": filepath,
+        "filename": filename,
+        "url": f"http://localhost:8000/recordings/{filename}" if filename else ""
+    }
+
+@app.get("/api/recordings/list")
+def list_recorded_sessions():
+    rec_dir = "recordings"
+    os.makedirs(rec_dir, exist_ok=True)
+    files = []
+    for f in sorted(os.listdir(rec_dir), reverse=True):
+        if f.endswith(".mp4"):
+            fpath = os.path.join(rec_dir, f)
+            size_mb = round(os.path.getsize(fpath) / (1024 * 1024), 2)
+            mtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(os.path.getmtime(fpath)))
+            files.append({
+                "filename": f,
+                "url": f"http://localhost:8000/recordings/{f}",
+                "size_mb": size_mb,
+                "modified": mtime,
+                "session_id": f.replace(".mp4", "")
+            })
+    return {"recordings": files}
 
 @app.post("/api/dataset/record/start")
 def start_recording(data: dict):

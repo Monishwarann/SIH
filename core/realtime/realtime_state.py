@@ -145,6 +145,24 @@ class RealtimeState:
         self.latency_p99 = 91.0
         self.mission_health_score = 96
 
+        # Multi-Camera 3D Spatial Fusion State
+        self.multi_camera_state = {
+            "fused_hand_3d": [0.0, 0.0, 1.2],
+            "fused_confidence": 0.95,
+            "active_cameras": 3,
+            "camera_statuses": [
+                {"camera_id": "cam_1", "name": "Primary Workstation", "status": "ONLINE", "coverage_angle_deg": 75.0, "position_3d": [0.0, 0.0, 1.5], "occlusion_level": "LOW"},
+                {"camera_id": "cam_2", "name": "Overhead Payload View", "status": "SIMULATED", "coverage_angle_deg": 75.0, "position_3d": [0.0, 1.2, 2.0], "occlusion_level": "LOW"},
+                {"camera_id": "cam_3", "name": "Side Angle View", "status": "SIMULATED", "coverage_angle_deg": 75.0, "position_3d": [1.5, 0.5, 1.2], "occlusion_level": "LOW"}
+            ],
+            "fused_objects_3d": [
+                {"name": "Main Container", "position_3d": [-0.3, -0.1, 1.0], "confidence": 0.96, "occluded": False},
+                {"name": "Red Box", "position_3d": [-0.2, 0.1, 1.15], "confidence": 0.94, "occluded": False},
+                {"name": "Yellow Box", "position_3d": [0.2, 0.1, 1.15], "confidence": 0.93, "occluded": False}
+            ],
+            "spatial_coverage_score": 0.98
+        }
+
     def to_dict(self):
         """Serialize complete state dictionary for WebSocket & REST API schema."""
         self.frame_id += 1
@@ -236,7 +254,8 @@ class RealtimeState:
 
             "camera_status": self.camera_status,
             "model_status": self.model_status,
-            "mission_health_score": self.mission_health_score
+            "mission_health_score": self.mission_health_score,
+            "multi_camera": self.multi_camera_state
         }
 
 # Global singleton state

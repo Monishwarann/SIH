@@ -16,6 +16,7 @@ from core.sequence.error_detector import ErrorDetector
 from backend.streaming.stream_manager import stream_manager
 from backend.voice.voice_engine import voice_manager
 from backend.recording.video_recorder import video_recorder
+from core.pipeline.multi_camera_manager import multi_camera_manager
 
 logger = logging.getLogger("ASTRA-HAR.CameraWorker")
 
@@ -99,6 +100,9 @@ class CameraWorker:
                 "left_hand": {"position": [int(w * 0.3), int(h * 0.5)], "velocity": [0.0, 0.0], "tracked": True},
                 "right_hand": {"position": hand_pos, "velocity": hand_vel, "tracked": True}
             }
+
+            # 3b. Execute Multi-Camera 3D Spatial Triangulation
+            multi_camera_manager.process_multi_view_frame(hand_pos, objects)
 
             # 4. Normalized Keypoints Skeleton Structure
             keypoints = self._generate_keypoints(person_bbox, hand_pos)

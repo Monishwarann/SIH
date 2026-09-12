@@ -2,6 +2,7 @@ import React from "react";
 import { useRealtimeStore } from "../realtime/realtimeStore";
 import { Eye, Hand, Box, Activity } from "lucide-react";
 import type { Interaction, ExperimentObject } from "../types";
+import { MultiCameraSpatialViewer } from "../components/MultiCameraSpatialViewer";
 
 export const LiveExperiment: React.FC = () => {
   const { state } = useRealtimeStore();
@@ -25,6 +26,9 @@ export const LiveExperiment: React.FC = () => {
           </span>
         </div>
       </div>
+
+      {/* Multi-Camera 3D Spatial Fusion Viewer */}
+      <MultiCameraSpatialViewer />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Full-width Video Canvas View */}

@@ -181,6 +181,19 @@ def get_config():
         "stream_url": "http://localhost:8000/video"
     }
 
+@app.get("/api/multi_camera/status")
+def get_multi_camera_status():
+    return realtime_state.multi_camera_state
+
+@app.post("/api/multi_camera/switch_angle")
+def switch_camera_angle(data: dict):
+    camera_id = data.get("camera_id", "cam_1")
+    return {
+        "status": "SUCCESS",
+        "active_camera_id": camera_id,
+        "message": f"Switched primary spatial viewpoint to {camera_id}"
+    }
+
 # ==================== EXPERIMENT TRAINING STUDIO API ====================
 
 @app.post("/api/experiments/create")

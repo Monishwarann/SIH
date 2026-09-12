@@ -120,4 +120,25 @@ export interface SystemState {
   camera_status: string;
   model_status: string;
   mission_health_score: number;
+
+  multi_camera?: {
+    fused_hand_3d: [number, number, number];
+    fused_confidence: number;
+    active_cameras: number;
+    camera_statuses: Array<{
+      camera_id: string;
+      name: string;
+      status: string;
+      coverage_angle_deg: number;
+      position_3d: [number, number, number];
+      occlusion_level: string;
+    }>;
+    fused_objects_3d: Array<{
+      name: string;
+      position_3d: [number, number, number];
+      confidence: number;
+      occluded: boolean;
+    }>;
+    spatial_coverage_score: number;
+  };
 }

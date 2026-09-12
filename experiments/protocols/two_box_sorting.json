@@ -1,0 +1,53 @@
+{
+  "experiment_id": "EXP_001",
+  "name": "Two-Box Sorting Protocol",
+  "description": "On-board BAS two-box sample sorting experiment sequence for microgravity payloads.",
+  "total_steps": 5,
+  "steps": [
+    {
+      "id": 1,
+      "name": "Approach Sample Container",
+      "action": "APPROACH_OBJECT",
+      "target_object": "container",
+      "timeout": 30,
+      "guidance": "Approach the primary sample storage unit.",
+      "voice_alert": "Please approach the sample container."
+    },
+    {
+      "id": 2,
+      "name": "Identify Red Box Sample",
+      "action": "IDENTIFY_OBJECT",
+      "target_object": "red_box",
+      "timeout": 25,
+      "guidance": "Locate and confirm visual identification of the red sample box.",
+      "voice_alert": "Identify the red sample box."
+    },
+    {
+      "id": 3,
+      "name": "Pick Red Box Sample",
+      "action": "PICK_OBJECT",
+      "target_object": "red_box",
+      "timeout": 20,
+      "guidance": "Grasp and lift the red sample box from storage slot.",
+      "voice_alert": "Pick up the red sample box."
+    },
+    {
+      "id": 4,
+      "name": "Move Sample to Target Tray",
+      "action": "MOVE_OBJECT",
+      "target_object": "target_area",
+      "timeout": 25,
+      "guidance": "Transfer the red sample box along designated spatial corridor to target rack.",
+      "voice_alert": "Move the sample box to the yellow target area."
+    },
+    {
+      "id": 5,
+      "name": "Place Sample in Slot",
+      "action": "PLACE_OBJECT",
+      "target_object": "target_area",
+      "timeout": 20,
+      "guidance": "Securely position sample box into target tray receiver.",
+      "voice_alert": "Place the sample box into the target slot."
+    }
+  ]
+}

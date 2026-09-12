@@ -1,0 +1,35 @@
+{
+  "system_name": "ASTRA-HAR",
+  "organization": "ISRO",
+  "problem_statement": "SIH 2026 PS 26174",
+  "version": "1.0.0",
+  "camera": {
+    "default_source": 0,
+    "width": 1280,
+    "height": 720,
+    "target_fps": 30,
+    "mirror_horizontal": true
+  },
+  "pipeline": {
+    "frame_buffer_size": 16,
+    "confidence_threshold": 0.60,
+    "stability_min_frames": 3,
+    "async_inference": true
+  },
+  "models": {
+    "action_model_path": "models/bas_har.keras",
+    "object_detector_path": "models/object_detector.onnx",
+    "pose_model_dir": "models/pose",
+    "hand_model_dir": "models/hand"
+  },
+  "logging": {
+    "db_path": "data/sih_database.db",
+    "events_jsonl": "logs/events.jsonl",
+    "recordings_dir": "recordings"
+  },
+  "voice": {
+    "enabled": true,
+    "speech_rate": 160,
+    "volume": 1.0
+  }
+}

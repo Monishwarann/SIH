@@ -19,7 +19,7 @@ export const LiveExperiment: React.FC = () => {
         </div>
         <div className="flex space-x-2 text-xs">
           <span className="bg-slate-900 border border-slate-800 text-cyan-400 px-3 py-1.5 rounded">
-            FPS: {state.camera.fps}
+            FPS: {state.camera.fps} 
           </span>
           <span className="bg-slate-900 border border-slate-800 text-slate-300 px-3 py-1.5 rounded">
             Latency: {state.performance.total_latency_ms} ms

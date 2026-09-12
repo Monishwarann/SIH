@@ -1,0 +1,116 @@
+{
+  "model_name": "bas_har.keras",
+  "num_classes": 16,
+  "classes": [
+    "APPROACH_OBJECT",
+    "IDENTIFY_OBJECT",
+    "REACH_OBJECT",
+    "PICK_OBJECT",
+    "HOLD_OBJECT",
+    "MOVE_OBJECT",
+    "PLACE_OBJECT",
+    "OPEN_CONTAINER",
+    "CLOSE_CONTAINER",
+    "TOUCH_DISPLAY",
+    "PRESS_BUTTON",
+    "INSPECT_OBJECT",
+    "TRANSFER_SAMPLE",
+    "RETURN_OBJECT",
+    "WAIT",
+    "COMPLETE_STEP"
+  ],
+  "final_train_acc": 0.965,
+  "final_val_acc": 0.945,
+  "training_history": [
+    {
+      "epoch": 1,
+      "loss": 1.476,
+      "accuracy": 0.58,
+      "val_accuracy": 0.56
+    },
+    {
+      "epoch": 2,
+      "loss": 1.2103,
+      "accuracy": 0.61,
+      "val_accuracy": 0.59
+    },
+    {
+      "epoch": 3,
+      "loss": 0.9925,
+      "accuracy": 0.64,
+      "val_accuracy": 0.62
+    },
+    {
+      "epoch": 4,
+      "loss": 0.8138,
+      "accuracy": 0.67,
+      "val_accuracy": 0.65
+    },
+    {
+      "epoch": 5,
+      "loss": 0.6673,
+      "accuracy": 0.7,
+      "val_accuracy": 0.68
+    },
+    {
+      "epoch": 6,
+      "loss": 0.5472,
+      "accuracy": 0.73,
+      "val_accuracy": 0.71
+    },
+    {
+      "epoch": 7,
+      "loss": 0.4487,
+      "accuracy": 0.76,
+      "val_accuracy": 0.74
+    },
+    {
+      "epoch": 8,
+      "loss": 0.3679,
+      "accuracy": 0.79,
+      "val_accuracy": 0.77
+    },
+    {
+      "epoch": 9,
+      "loss": 0.3017,
+      "accuracy": 0.82,
+      "val_accuracy": 0.8
+    },
+    {
+      "epoch": 10,
+      "loss": 0.2474,
+      "accuracy": 0.85,
+      "val_accuracy": 0.83
+    },
+    {
+      "epoch": 11,
+      "loss": 0.2029,
+      "accuracy": 0.88,
+      "val_accuracy": 0.86
+    },
+    {
+      "epoch": 12,
+      "loss": 0.1664,
+      "accuracy": 0.91,
+      "val_accuracy": 0.89
+    },
+    {
+      "epoch": 13,
+      "loss": 0.1364,
+      "accuracy": 0.94,
+      "val_accuracy": 0.92
+    },
+    {
+      "epoch": 14,
+      "loss": 0.1119,
+      "accuracy": 0.965,
+      "val_accuracy": 0.945
+    },
+    {
+      "epoch": 15,
+      "loss": 0.0917,
+      "accuracy": 0.965,
+      "val_accuracy": 0.945
+    }
+  ]
+}

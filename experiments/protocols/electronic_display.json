@@ -1,0 +1,44 @@
+{
+  "experiment_id": "EXP_002",
+  "name": "Electronic Display Interaction",
+  "description": "BAS Display payload diagnostic and calibration experiment protocol.",
+  "total_steps": 4,
+  "steps": [
+    {
+      "id": 1,
+      "name": "Approach Display Module",
+      "action": "APPROACH_OBJECT",
+      "target_object": "display",
+      "timeout": 20,
+      "guidance": "Approach the payload console display screen.",
+      "voice_alert": "Please step up to the display module."
+    },
+    {
+      "id": 2,
+      "name": "Touch Screen Target",
+      "action": "TOUCH_DISPLAY",
+      "target_object": "display",
+      "timeout": 15,
+      "guidance": "Touch the onscreen start button.",
+      "voice_alert": "Touch the display screen to initiate diagnostic test."
+    },
+    {
+      "id": 3,
+      "name": "Press Calibration Button",
+      "action": "PRESS_BUTTON",
+      "target_object": "button",
+      "timeout": 15,
+      "guidance": "Press hardware tactile switch to execute sensor calibration.",
+      "voice_alert": "Press the calibration button."
+    },
+    {
+      "id": 4,
+      "name": "Inspect Diagnostic Output",
+      "action": "INSPECT_OBJECT",
+      "target_object": "display",
+      "timeout": 20,
+      "guidance": "Observe and inspect display values for verification.",
+      "voice_alert": "Inspect display telemetry to complete step."
+    }
+  ]
+}

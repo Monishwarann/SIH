@@ -1,0 +1,25 @@
+{
+  "model": "models/bas_har.keras",
+  "overall_accuracy": 0.9461,
+  "precision": 0.9341,
+  "recall": 0.9381,
+  "f1_score": 0.9361,
+  "per_class_accuracy": {
+    "APPROACH_OBJECT": 0.9447,
+    "IDENTIFY_OBJECT": 0.9651,
+    "REACH_OBJECT": 0.9211,
+    "PICK_OBJECT": 0.9695,
+    "HOLD_OBJECT": 0.9505,
+    "MOVE_OBJECT": 0.9716,
+    "PLACE_OBJECT": 0.9392,
+    "OPEN_CONTAINER": 0.967,
+    "CLOSE_CONTAINER": 0.9507,
+    "TOUCH_DISPLAY": 0.9519,
+    "PRESS_BUTTON": 0.9431,
+    "INSPECT_OBJECT": 0.9602,
+    "TRANSFER_SAMPLE": 0.9147,
+    "RETURN_OBJECT": 0.9109,
+    "WAIT": 0.9399,
+    "COMPLETE_STEP": 0.938
+  }
+}

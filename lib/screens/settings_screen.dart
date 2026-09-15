@@ -79,10 +79,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Text("HAR Confidence Cutoff: ${(_confidenceThreshold * 100).toInt()}%", style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                    SizedBox(
+                      width: 160,
+                      child: Slider(
+                        value: _confidenceThreshold,
+                        min: 0.30,
+                        max: 0.95,
+                        divisions: 13,
+                        activeColor: AppColors.primaryCyan,
+                        onChanged: (v) => setState(() => _confidenceThreshold = v),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     const Text("Offline TTS Voice Guidance:", style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                     Switch(
                       value: _voiceGuidanceEnabled,
-                      activeColor: AppColors.primaryCyan,
+                      activeThumbColor: AppColors.primaryCyan,
                       onChanged: (v) => setState(() => _voiceGuidanceEnabled = v),
                     ),
                   ],

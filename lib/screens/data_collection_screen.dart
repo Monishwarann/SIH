@@ -49,7 +49,7 @@ class _DataCollectionScreenState extends State<DataCollectionScreen> {
                             children: [
                               Icon(_isRecording ? Icons.fiber_manual_record : Icons.camera_alt_outlined, size: 56, color: _isRecording ? AppColors.errorRed : AppColors.textMuted),
                               const SizedBox(height: 12),
-                              Text(_isRecording ? "RECORDING SAMPLE DATASET FEED..." : "CAMERA READY FOR RECORDING", style: TextStyle(color: _isRecording ? AppColors.errorRed : AppColors.primaryCyan, fontWeight: FontWeight.bold, fontSize: 14)),
+                              Text(_isRecording ? "RECORDING SAMPLE FOR PARTICIPANT $_participantId..." : "CAMERA READY FOR RECORDING", style: TextStyle(color: _isRecording ? AppColors.errorRed : AppColors.primaryCyan, fontWeight: FontWeight.bold, fontSize: 14)),
                             ],
                           ),
                         ),
@@ -75,6 +75,7 @@ class _DataCollectionScreenState extends State<DataCollectionScreen> {
                         const Text("Participant ID:", style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
                         const SizedBox(height: 4),
                         TextField(
+                          controller: TextEditingController(text: _participantId),
                           decoration: InputDecoration(
                             hintText: "P01",
                             filled: true,
@@ -87,7 +88,7 @@ class _DataCollectionScreenState extends State<DataCollectionScreen> {
                         const Text("Target BAS Action Class:", style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
                         const SizedBox(height: 4),
                         DropdownButtonFormField<String>(
-                          value: _selectedAction,
+                          initialValue: _selectedAction,
                           dropdownColor: AppColors.cardBackground,
                           items: _actions.map((a) => DropdownMenuItem(value: a, child: Text(a, style: const TextStyle(fontSize: 12)))).toList(),
                           onChanged: (v) => setState(() => _selectedAction = v!),
@@ -101,7 +102,7 @@ class _DataCollectionScreenState extends State<DataCollectionScreen> {
                         const Text("Sequence Quality Type:", style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
                         const SizedBox(height: 4),
                         DropdownButtonFormField<String>(
-                          value: _sequenceType,
+                          initialValue: _sequenceType,
                           dropdownColor: AppColors.cardBackground,
                           items: ['correct', 'skipped', 'wrong_order', 'wrong_object']
                               .map((t) => DropdownMenuItem(value: t, child: Text(t.toUpperCase(), style: const TextStyle(fontSize: 12))))

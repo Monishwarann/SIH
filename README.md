@@ -367,4 +367,5 @@ Broadcasting real-time frame telemetry at **25 Hz**:
 
 - **Developed for**: **Indian Space Research Organisation (ISRO)** — **SIH 2026 Problem Statement 26174**.
 - **Project Lead**: Monishwarann K ([@Monishwarann](https://github.com/Monishwarann))
-- **License**: Released under the **MIT License**.
+- **License**: Released under the [MIT License](LICENSE). See the [`LICENSE`](LICENSE) file for details.
+

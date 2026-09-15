@@ -1,7 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/realtime_provider.dart';
 import '../theme/app_theme.dart';
+import '../models/telemetry_model.dart';
 
 class NavigationSidebar extends StatelessWidget {
   const NavigationSidebar({super.key});
@@ -23,97 +25,157 @@ class NavigationSidebar extends StatelessWidget {
 
     return Container(
       width: 240,
-      color: AppColors.cardBackground,
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 12, bottom: 12),
-                  child: Text(
-                    "PAYLOAD OPERATIONS",
-                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textMuted, letterSpacing: 1.2),
-                  ),
+      margin: const EdgeInsets.all(8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.cardBackground.withValues(alpha: 0.75),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.cardBorder.withValues(alpha: 0.8)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.4),
+                  blurRadius: 12,
+                  offset: const Offset(2, 4),
                 ),
-                ...menuItems.map((item) {
-                  final String id = item['id'] as String;
-                  final String label = item['label'] as String;
-                  final IconData icon = item['icon'] as IconData;
-                  final bool isActive = activeTab == id;
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: InkWell(
-                      onTap: () => provider.setActiveTab(id),
-                      borderRadius: BorderRadius.circular(6),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isActive ? AppColors.primaryCyanGlow : Colors.transparent,
-                          border: Border.all(
-                            color: isActive ? AppColors.primaryCyan : Colors.transparent,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(icon, size: 18, color: isActive ? AppColors.primaryCyan : AppColors.textSecondary),
-                            const SizedBox(width: 12),
-                            Text(
-                              label,
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                                color: isActive ? AppColors.primaryCyan : AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
               ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              border: Border(top: BorderSide(color: AppColors.cardBorder)),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Target FPS:", style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                    Text("${provider.currentTelemetry.fps.toStringAsFixed(1)}", style: const TextStyle(fontSize: 11, color: AppColors.textPrimary)),
-                  ],
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10, bottom: 12),
+                        child: Text(
+                          "PAYLOAD OPERATIONS",
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textMuted,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                      ...menuItems.map((item) {
+                        final String id = item['id'] as String;
+                        final String label = item['label'] as String;
+                        final IconData icon = item['icon'] as IconData;
+                        final bool isActive = activeTab == id;
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: InkWell(
+                            onTap: () => provider.setActiveTab(id),
+                            borderRadius: BorderRadius.circular(8),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+                              decoration: BoxDecoration(
+                                color: isActive
+                                    ? AppColors.primaryCyanGlow.withValues(alpha: 0.35)
+                                    : Colors.transparent,
+                                border: Border.all(
+                                  color: isActive
+                                      ? AppColors.primaryCyan
+                                      : Colors.transparent,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  if (isActive)
+                                    BoxShadow(
+                                      color: AppColors.primaryCyan.withValues(alpha: 0.2),
+                                      blurRadius: 10,
+                                    ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(icon,
+                                      size: 18,
+                                      color: isActive
+                                          ? AppColors.primaryCyan
+                                          : AppColors.textSecondary),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    label,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight:
+                                          isActive ? FontWeight.bold : FontWeight.normal,
+                                      color: isActive
+                                          ? AppColors.primaryCyan
+                                          : AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Latency:", style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                    Text("${provider.currentTelemetry.latencyMs.toStringAsFixed(1)} ms", style: const TextStyle(fontSize: 11, color: AppColors.primaryCyan)),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Inference:", style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                    const Text("100% Offline", style: TextStyle(fontSize: 11, color: AppColors.successEmerald)),
-                  ],
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    border: Border(top: BorderSide(color: AppColors.cardBorder.withValues(alpha: 0.6))),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Target FPS:",
+                              style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                          Text(provider.currentTelemetry.formattedFps,
+                              style: const TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Latency:",
+                              style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                          Text(provider.currentTelemetry.formattedLatency,
+                              style: const TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.primaryCyan,
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Inference:",
+                              style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                          const Text("100% Offline",
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.successEmerald,
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

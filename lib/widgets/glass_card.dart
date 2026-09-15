@@ -11,6 +11,8 @@ class GlassCard extends StatefulWidget {
   final Color? borderColor;
   final Color? backgroundColor;
   final double borderRadius;
+  final double blurSigma;
+  final Gradient? gradient;
   final VoidCallback? onTap;
 
   const GlassCard({
@@ -23,8 +25,81 @@ class GlassCard extends StatefulWidget {
     this.borderColor,
     this.backgroundColor,
     this.borderRadius = 12.0,
+    this.blurSigma = 12.0,
+    this.gradient,
     this.onTap,
   });
+
+  factory GlassCard.frosted({
+    required Widget child,
+    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? margin,
+    double width = double.infinity,
+    double? height,
+    double borderRadius = 12.0,
+    VoidCallback? onTap,
+  }) {
+    return GlassCard(
+      padding: padding,
+      margin: margin,
+      width: width,
+      height: height,
+      borderRadius: borderRadius,
+      blurSigma: 16.0,
+      backgroundColor: const Color(0x1A0F172A),
+      borderColor: const Color(0x3300F0FF),
+      onTap: onTap,
+      child: child,
+    );
+  }
+
+  factory GlassCard.neon({
+    required Widget child,
+    required Color neonColor,
+    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? margin,
+    double width = double.infinity,
+    double? height,
+    double borderRadius = 12.0,
+    VoidCallback? onTap,
+  }) {
+    return GlassCard(
+      padding: padding,
+      margin: margin,
+      width: width,
+      height: height,
+      borderRadius: borderRadius,
+      blurSigma: 14.0,
+      backgroundColor: neonColor.withValues(alpha: 0.08),
+      borderColor: neonColor.withValues(alpha: 0.6),
+      onTap: onTap,
+      child: child,
+    );
+  }
+
+  factory GlassCard.gradient({
+    required Widget child,
+    required Gradient gradient,
+    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? margin,
+    double width = double.infinity,
+    double? height,
+    double borderRadius = 12.0,
+    VoidCallback? onTap,
+  }) {
+    return GlassCard(
+      padding: padding,
+      margin: margin,
+      width: width,
+      height: height,
+      borderRadius: borderRadius,
+      blurSigma: 14.0,
+      gradient: gradient,
+      borderColor: Colors.white.withValues(alpha: 0.2),
+      onTap: onTap,
+      child: child,
+    );
+  }
 
   @override
   State<GlassCard> createState() => _GlassCardState();
@@ -38,12 +113,13 @@ class _GlassCardState extends State<GlassCard> {
     final effectiveBorderColor = widget.borderColor ??
         (_isHovered ? AppColors.primaryCyan : AppColors.cardBorder);
     final effectiveBgColor = widget.backgroundColor ??
-        AppColors.cardBackground.withOpacity(0.75);
+        AppColors.cardBackground.withValues(alpha: 0.75);
 
     Widget content = ClipRRect(
       borderRadius: BorderRadius.circular(widget.borderRadius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        filter: ImageFilter.blur(
+            sigmaX: widget.blurSigma, sigmaY: widget.blurSigma),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           width: widget.width,
@@ -51,7 +127,8 @@ class _GlassCardState extends State<GlassCard> {
           padding: widget.padding ?? const EdgeInsets.all(16),
           margin: widget.margin,
           decoration: BoxDecoration(
-            color: effectiveBgColor,
+            color: widget.gradient == null ? effectiveBgColor : null,
+            gradient: widget.gradient,
             borderRadius: BorderRadius.circular(widget.borderRadius),
             border: Border.all(
               color: effectiveBorderColor,
@@ -61,14 +138,14 @@ class _GlassCardState extends State<GlassCard> {
               if (_isHovered)
                 BoxShadow(
                   color: (widget.borderColor ?? AppColors.primaryCyan)
-                      .withOpacity(0.2),
-                  blurRadius: 16,
+                      .withValues(alpha: 0.25),
+                  blurRadius: 18,
                   spreadRadius: 1,
                 )
               else
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 8,
+                  color: Colors.black.withValues(alpha: 0.35),
+                  blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
             ],

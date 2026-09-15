@@ -12,14 +12,25 @@ class RealtimeProvider with ChangeNotifier {
   TelemetryData _currentTelemetry = TelemetryData.initial();
   bool _isWsConnected = false;
   bool _isExperimentRunning = false;
+  bool _isVoiceMuted = false;
   String _activeTab = 'dashboard';
-  List<String> _alerts = [];
+  final List<String> _alerts = [];
+
+  // Rolling Telemetry Waveform Buffers (30 samples)
+  final List<double> _fpsHistory = List.filled(30, 30.0);
+  final List<double> _latencyHistory = List.filled(30, 42.0);
+  final List<double> _confidenceHistory = List.filled(30, 0.94);
 
   TelemetryData get currentTelemetry => _currentTelemetry;
   bool get isWsConnected => _isWsConnected;
   bool get isExperimentRunning => _isExperimentRunning;
+  bool get isVoiceMuted => _isVoiceMuted;
   String get activeTab => _activeTab;
   List<String> get alerts => List.unmodifiable(_alerts);
+
+  List<double> get fpsHistory => List.unmodifiable(_fpsHistory);
+  List<double> get latencyHistory => List.unmodifiable(_latencyHistory);
+  List<double> get confidenceHistory => List.unmodifiable(_confidenceHistory);
 
   RealtimeProvider() {
     _initConnection();
@@ -33,19 +44,39 @@ class RealtimeProvider with ChangeNotifier {
 
     _wsService.telemetryStream.listen((data) {
       _currentTelemetry = data;
-      
+
+      // Append rolling history buffers
+      _fpsHistory.removeAt(0);
+      _fpsHistory.add(data.fps);
+
+      _latencyHistory.removeAt(0);
+      _latencyHistory.add(data.latencyMs);
+
+      _confidenceHistory.removeAt(0);
+      _confidenceHistory.add(data.confidence);
+
       // Voice alert trigger if status changed
-      if (data.status != 'CORRECT' && data.alertMessage.isNotEmpty) {
+      if (!_isVoiceMuted && data.status != 'CORRECT' && data.alertMessage.isNotEmpty) {
         _voiceService.speak(data.alertMessage);
-        if (!_alerts.contains(data.alertMessage)) {
-          _alerts.insert(0, '${data.timestamp.substring(11, 19)} - ${data.alertMessage}');
-          if (_alerts.length > 20) _alerts.removeLast();
+        final timestampStr = data.timestamp.length >= 19
+            ? data.timestamp.substring(11, 19)
+            : DateTime.now().toIso8601String().substring(11, 19);
+
+        final alertEntry = '$timestampStr - [${data.status}] ${data.alertMessage}';
+        if (!_alerts.contains(alertEntry)) {
+          _alerts.insert(0, alertEntry);
+          if (_alerts.length > 30) _alerts.removeLast();
         }
       }
       notifyListeners();
     });
 
     _wsService.connect();
+  }
+
+  void toggleVoiceMute() {
+    _isVoiceMuted = !_isVoiceMuted;
+    notifyListeners();
   }
 
   void setActiveTab(String tab) {
@@ -57,7 +88,9 @@ class RealtimeProvider with ChangeNotifier {
     final success = await _aiService.startExperiment();
     if (success) {
       _isExperimentRunning = true;
-      _voiceService.speak("Experiment started. Position yourself facing the container.");
+      if (!_isVoiceMuted) {
+        _voiceService.speak("Experiment started. Position yourself facing the container.");
+      }
       notifyListeners();
     }
   }
@@ -66,7 +99,9 @@ class RealtimeProvider with ChangeNotifier {
     final success = await _aiService.stopExperiment();
     if (success) {
       _isExperimentRunning = false;
-      _voiceService.speak("Experiment session stopped.");
+      if (!_isVoiceMuted) {
+        _voiceService.speak("Experiment session stopped.");
+      }
       notifyListeners();
     }
   }
@@ -74,7 +109,9 @@ class RealtimeProvider with ChangeNotifier {
   Future<void> resetExperiment() async {
     final success = await _aiService.resetExperiment();
     if (success) {
-      _voiceService.speak("Experiment sequence reset to step 1.");
+      if (!_isVoiceMuted) {
+        _voiceService.speak("Experiment sequence reset to step 1.");
+      }
       notifyListeners();
     }
   }

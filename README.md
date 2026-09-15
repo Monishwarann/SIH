@@ -5,6 +5,7 @@
 > **Organization:** Indian Space Research Organisation (ISRO)  
 > **Platform:** Flutter 3.44 Desktop (Windows) / React 18 Scientific Web Dashboard / Local Python Edge AI Engine  
 > **Deployment:** 100% Offline Edge Processing — Zero Cloud Dependency During Inference  
+> **Last Updated:** September 15, 2026  
 
 ---
 

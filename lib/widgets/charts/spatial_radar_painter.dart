@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../models/telemetry_model.dart';
-import '../theme/app_theme.dart';
+import '../../models/telemetry_model.dart';
+import '../../theme/app_theme.dart';
 
 class SpatialRadarWidget extends StatefulWidget {
   final TelemetryData telemetry;
@@ -72,12 +72,12 @@ class SpatialRadarPainter extends CustomPainter {
 
     // 1. Draw Concentric Sonar Rings
     final ringPaint = Paint()
-      ..color = AppColors.primaryCyan.withOpacity(0.18)
+      ..color = AppColors.primaryCyan.withValues(alpha: 0.18)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
     final ringDashPaint = Paint()
-      ..color = AppColors.primaryCyan.withOpacity(0.08)
+      ..color = AppColors.primaryCyan.withValues(alpha: 0.08)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
@@ -88,7 +88,7 @@ class SpatialRadarPainter extends CustomPainter {
 
     // 2. Draw Crosshairs & Axis Grid
     final axisPaint = Paint()
-      ..color = AppColors.primaryCyan.withOpacity(0.25)
+      ..color = AppColors.primaryCyan.withValues(alpha: 0.25)
       ..strokeWidth = 1.0;
 
     canvas.drawLine(
@@ -114,8 +114,8 @@ class SpatialRadarPainter extends CustomPainter {
         startAngle: 0.0,
         endAngle: math.pi / 2,
         colors: [
-          AppColors.primaryCyan.withOpacity(0.4),
-          AppColors.primaryCyan.withOpacity(0.0),
+          AppColors.primaryCyan.withValues(alpha: 0.4),
+          AppColors.primaryCyan.withValues(alpha: 0.0),
         ],
         stops: const [0.0, 1.0],
         transform: GradientRotation(sweepAngle),
@@ -147,7 +147,7 @@ class SpatialRadarPainter extends CustomPainter {
 
       // Glow circle
       final glowPaint = Paint()
-        ..color = dotColor.withOpacity(0.3)
+        ..color = dotColor.withValues(alpha: 0.3)
         ..style = PaintingStyle.fill;
       canvas.drawCircle(objOffset, 12, glowPaint);
 
@@ -156,14 +156,14 @@ class SpatialRadarPainter extends CustomPainter {
 
       // Connecting line from center to object
       final linePaint = Paint()
-        ..color = dotColor.withOpacity(0.4)
+        ..color = dotColor.withValues(alpha: 0.4)
         ..strokeWidth = 1.0;
       canvas.drawLine(center, objOffset, linePaint);
 
       // Label text
       final textSpan = TextSpan(
         text: '${obj.name} (${(obj.confidence * 100).toInt()}%)',
-        style: TextStyle(
+        style: const TextStyle(
           color: AppColors.textPrimary,
           fontSize: 9,
           fontWeight: FontWeight.bold,
@@ -181,7 +181,7 @@ class SpatialRadarPainter extends CustomPainter {
     if (telemetry.handsDetected > 0) {
       final handPaint = Paint()..color = AppColors.primaryCyan;
       final handGlow = Paint()
-        ..color = AppColors.primaryCyan.withOpacity(0.35);
+        ..color = AppColors.primaryCyan.withValues(alpha: 0.35);
 
       final hand1 = Offset(center.dx - 24, center.dy + 18);
       final hand2 = Offset(center.dx + 28, center.dy + 12);
@@ -196,7 +196,7 @@ class SpatialRadarPainter extends CustomPainter {
     }
 
     // 6. Cardinal Compass Directions Text
-    final compassStyle = const TextStyle(
+    const compassStyle = TextStyle(
       color: AppColors.primaryCyan,
       fontSize: 10,
       fontWeight: FontWeight.bold,

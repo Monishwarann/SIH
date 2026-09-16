@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/realtime_provider.dart';
-import 'theme/app_theme.dart';
-import 'widgets/header_bar.dart';
-import 'widgets/navigation_sidebar.dart';
+import 'routes/app_routes.dart';
+import 'theme/theme.dart';
+import 'widgets/widgets.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/live_monitoring_screen.dart';
 import 'screens/experiment_selector_screen.dart';
@@ -21,6 +21,7 @@ class AstraHarApp extends StatelessWidget {
       title: 'ASTRA-HAR :: On-board BAS HAR Monitor (ISRO PS 26174)',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
+      onGenerateRoute: AppRoutes.generateRoute,
       home: const MainShell(),
     );
   }
@@ -65,3 +66,4 @@ class MainShell extends StatelessWidget {
     );
   }
 }
+

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import '../../theme/app_theme.dart';
 
 class LiveWaveformGraph extends StatelessWidget {
   final List<double> dataPoints;
@@ -26,7 +26,7 @@ class LiveWaveformGraph extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground.withOpacity(0.8),
+        color: AppColors.cardBackground.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: AppColors.cardBorder),
       ),
@@ -97,7 +97,7 @@ class _WaveformPainter extends CustomPainter {
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);
 
     final gridPaint = Paint()
-      ..color = AppColors.cardBorder.withOpacity(0.4)
+      ..color = AppColors.cardBorder.withValues(alpha: 0.4)
       ..strokeWidth = 0.5;
 
     for (int i = 1; i < 4; i++) {
@@ -135,8 +135,8 @@ class _WaveformPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          lineColor.withOpacity(0.35),
-          lineColor.withOpacity(0.0),
+          lineColor.withValues(alpha: 0.35),
+          lineColor.withValues(alpha: 0.0),
         ],
       );
 

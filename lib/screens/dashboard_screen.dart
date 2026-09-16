@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/realtime_provider.dart';
-import '../theme/app_theme.dart';
-import '../widgets/glass_card.dart';
+import '../theme/theme.dart';
+import '../widgets/widgets.dart';
+
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});

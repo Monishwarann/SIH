@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/realtime_provider.dart';
-import '../theme/app_theme.dart';
+import '../theme/theme.dart';
 import '../models/telemetry_model.dart';
-import '../widgets/glass_card.dart';
-import '../widgets/spatial_radar_painter.dart';
-import '../widgets/live_graph_widget.dart';
+import '../widgets/widgets.dart';
+
 
 class LiveMonitoringScreen extends StatefulWidget {
   const LiveMonitoringScreen({super.key});

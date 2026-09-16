@@ -1,9 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/realtime_provider.dart';
-import '../theme/app_theme.dart';
-import '../models/telemetry_model.dart';
+import '../../providers/realtime_provider.dart';
+import '../../theme/app_theme.dart';
+import '../../models/telemetry_model.dart';
+
 
 class NavigationSidebar extends StatelessWidget {
   const NavigationSidebar({super.key});
@@ -118,7 +119,7 @@ class NavigationSidebar extends StatelessWidget {
                             ),
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 ),

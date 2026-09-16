@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/realtime_provider.dart';
-import '../theme/app_theme.dart';
+import '../../providers/realtime_provider.dart';
+import '../../theme/app_theme.dart';
+import '../common/status_badge.dart';
 
 class HeaderBar extends StatelessWidget implements PreferredSizeWidget {
   const HeaderBar({super.key});
@@ -53,10 +54,10 @@ class HeaderBar extends StatelessWidget implements PreferredSizeWidget {
                         color: AppColors.primaryCyan, size: 20),
                   ),
                   const SizedBox(width: 12),
-                  Column(
+                  const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text("ASTRA-HAR",
                           style: TextStyle(
                               fontSize: 15,
@@ -74,50 +75,9 @@ class HeaderBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isConnected
-                          ? AppColors.successEmerald.withValues(alpha: 0.15)
-                          : AppColors.errorRed.withValues(alpha: 0.15),
-                      border: Border.all(
-                        color: isConnected
-                            ? AppColors.successEmerald
-                            : AppColors.errorRed,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: (isConnected
-                                  ? AppColors.successEmerald
-                                  : AppColors.errorRed)
-                              .withValues(alpha: 0.2),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.circle,
-                            size: 8,
-                            color: isConnected
-                                ? AppColors.successEmerald
-                                : AppColors.errorRed),
-                        const SizedBox(width: 8),
-                        Text(
-                          isConnected ? "AI ENGINE ONLINE" : "AI ENGINE OFFLINE",
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: isConnected
-                                ? AppColors.successEmerald
-                                : AppColors.errorRed,
-                            letterSpacing: 0.8,
-                          ),
-                        ),
-                      ],
-                    ),
+                  StatusBadge(
+                    label: isConnected ? "AI ENGINE ONLINE" : "AI ENGINE OFFLINE",
+                    isSuccess: isConnected,
                   ),
                   const SizedBox(width: 14),
                   ElevatedButton.icon(

@@ -32,33 +32,62 @@ class ActionRecognizer:
     Processes rolling frame buffers (16-32 frames) to infer human action classes offline.
     """
 
-    def __init__(self, model_path="models/bas_har.keras", frame_buffer_size=16):
+    def __init__(self, model_path="models/best_bilstm_model.keras", frame_buffer_size=16):
         self.model_path = model_path
         self.frame_buffer_size = frame_buffer_size
         self.classes = BAS_ACTION_CLASSES
         self.model = None
         self.is_loaded = False
+        self.input_h = 224
+        self.input_w = 224
         
         self._load_or_initialize_model()
 
     def _load_or_initialize_model(self):
-        """Loads local model weights or initializes offline feature-classifier weights."""
-        if os.path.exists(self.model_path):
+        """Loads local Keras BiLSTM/HAR model weights or initializes offline fallback classifier."""
+        candidate_paths = [
+            self.model_path,
+            f"{self.model_path}.zip",
+            "models/best_bilstm_model.keras",
+            "best_bilstm_model.keras",
+            "best_bilstm_model.keras.zip",
+            "models/bas_har.keras"
+        ]
+
+        target_path = None
+        for path in candidate_paths:
+            if os.path.exists(path):
+                target_path = path
+                break
+
+        if target_path:
             try:
                 import tensorflow as tf
-                self.model = tf.keras.models.load_model(self.model_path)
+                self.model = tf.keras.models.load_model(target_path)
                 self.is_loaded = True
-                logger.info(f"Loaded HAR Keras model from {self.model_path}")
+                self.model_path = target_path
+                
+                # Auto-detect input spatial dimensions from model architecture if available
+                if hasattr(self.model, "input_shape") and self.model.input_shape:
+                    shape = self.model.input_shape
+                    if isinstance(shape, tuple) and len(shape) == 5:
+                        if shape[2] is not None:
+                            self.input_h = shape[2]
+                        if shape[3] is not None:
+                            self.input_w = shape[3]
+                        if shape[1] is not None:
+                            self.frame_buffer_size = shape[1]
+                logger.info(f"Loaded HAR Keras model from {target_path} (Input shape: {self.frame_buffer_size}x{self.input_h}x{self.input_w})")
                 return
             except Exception as e:
-                logger.warning(f"Could not load Keras model ({e}). Using offline HAR pipeline engine.")
+                logger.warning(f"Could not load Keras model from {target_path} ({e}). Using offline HAR pipeline engine.")
 
         self.is_loaded = True
         logger.info("Initialized offline 3D HAR temporal classifier engine.")
 
     def predict_from_buffer(self, frame_buffer: list, keypoints: dict = None, interactions: list = None) -> dict:
         """
-        Input: list of 16-32 video frames (RGB ndarray)
+        Input: list of video frames (RGB ndarray)
         Output: dict with predicted action class, confidence score, and per-class probabilities.
         """
         if not frame_buffer:
@@ -70,11 +99,11 @@ class ActionRecognizer:
         # Method 1: If Keras / TensorFlow model is loaded
         if self.model is not None:
             try:
-                resized_frames = [cv2.resize(f, (112, 112)) for f in frames]
-                # Shape: (1, 16, 112, 112, 3)
-                clip = np.expand_dims(np.array(resized_frames, dtype=np.float32) / 255.0, axis=0)
+                resized_frames = [cv2.resize(f, (self.input_w, self.input_h)) for f in frames]
+                # Shape: (1, frame_buffer_size, input_h, input_w, 3)
+                clip = np.expand_dims(np.array(resized_frames, dtype=np.float32), axis=0)
                 preds = self.model.predict(clip, verbose=0)[0]
-                idx = np.argmax(preds)
+                idx = int(np.argmax(preds))
                 conf = float(preds[idx])
                 act = self.classes[idx] if idx < len(self.classes) else "WAIT"
                 return {

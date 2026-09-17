@@ -103,7 +103,7 @@ class DashboardScreen extends StatelessWidget {
                         _buildHealthRow("Camera Pipeline:",
                             "ONLINE (1280x720 @ 30 FPS)", AppColors.successEmerald),
                         _buildHealthRow("3D HAR Model:",
-                            "ACTIVE (models/bas_har.keras)", AppColors.successEmerald),
+                            "ACTIVE (models/best_bilstm_model.keras)", AppColors.successEmerald),
                         _buildHealthRow("Object Detector:",
                             "ONLINE (models/object_detector.onnx)", AppColors.successEmerald),
                         _buildHealthRow("Pose Skeleton:", "TRACKING ACTIVE",

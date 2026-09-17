@@ -17,7 +17,7 @@
     "async_inference": true
   },
   "models": {
-    "action_model_path": "models/bas_har.keras",
+    "action_model_path": "models/best_bilstm_model.keras",
     "object_detector_path": "models/object_detector.onnx",
     "pose_model_dir": "models/pose",
     "hand_model_dir": "models/hand"

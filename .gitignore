@@ -55,4 +55,5 @@ build/
 .vscode/
 .idea/
 .DS_Store
-Thumbs.db
+# Root temporary model folder
+/best_bilstm_model.keras

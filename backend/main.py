@@ -4,7 +4,7 @@ import logging
 import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.responses import StreamingResponse, FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from core.realtime.realtime_state import realtime_state
@@ -40,6 +40,10 @@ app.add_middleware(
 os.makedirs("recordings", exist_ok=True)
 app.mount("/recordings", StaticFiles(directory="recordings"), name="recordings")
 
+# Mount frontend dist static folder if built
+if os.path.exists("frontend/dist"):
+    app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
+
 scenario_engine = ScenarioEngine(scenario_name="normal")
 execution_mode = "live"  # "live" for laptop webcam, "demo" for scenario generator
 
@@ -69,6 +73,205 @@ async def realtime_background_loop():
         await asyncio.sleep(0.04)  # ~25 Hz
 
 # ==================== REST API ENDPOINTS ====================
+
+@app.get("/", response_class=HTMLResponse)
+def root_dashboard():
+    """Serve ASTRA-HAR Mission Control Portal Landing Page."""
+    if os.path.exists("frontend/dist/index.html"):
+        with open("frontend/dist/index.html", "r", encoding="utf-8") as f:
+            return f.read()
+
+    return """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ASTRA-HAR :: Mission Control Portal</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --bg: #090d16;
+                --card: #121927;
+                --border: #1e293b;
+                --cyan: #06b6d4;
+                --emerald: #10b981;
+                --text: #f8fafc;
+                --muted: #94a3b8;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: var(--bg);
+                color: var(--text);
+                font-family: 'Inter', sans-serif;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            header {
+                background: rgba(18, 25, 39, 0.8);
+                backdrop-filter: blur(12px);
+                border-bottom: 1px solid var(--border);
+                padding: 16px 32px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .logo {
+                font-size: 20px;
+                font-weight: 700;
+                letter-spacing: 1px;
+                color: var(--cyan);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .status-badge {
+                background: rgba(16, 185, 129, 0.15);
+                color: var(--emerald);
+                border: 1px solid rgba(16, 185, 129, 0.3);
+                padding: 4px 12px;
+                border-radius: 9999px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            main {
+                max-width: 1200px;
+                margin: 40px auto;
+                padding: 0 24px;
+                flex: 1;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .hero {
+                text-align: center;
+                margin-bottom: 40px;
+            }
+            h1 {
+                font-size: 32px;
+                margin-bottom: 12px;
+            }
+            p.sub {
+                color: var(--muted);
+                font-size: 16px;
+                max-width: 700px;
+                margin: 0 auto;
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 24px;
+                margin-top: 32px;
+            }
+            .card {
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 24px;
+                transition: transform 0.2s, border-color 0.2s;
+            }
+            .card:hover {
+                transform: translateY(-2px);
+                border-color: var(--cyan);
+            }
+            .card h3 {
+                margin-top: 0;
+                font-size: 18px;
+                color: var(--cyan);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .card p {
+                color: var(--muted);
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            .btn {
+                display: inline-block;
+                background: var(--cyan);
+                color: #000;
+                font-weight: 700;
+                padding: 10px 20px;
+                border-radius: 6px;
+                text-decoration: none;
+                margin-top: 16px;
+                font-size: 14px;
+            }
+            .btn-outline {
+                background: transparent;
+                border: 1px solid var(--border);
+                color: var(--text);
+            }
+            .btn-outline:hover {
+                border-color: var(--cyan);
+                color: var(--cyan);
+            }
+            code {
+                font-family: 'JetBrains Mono', monospace;
+                background: rgba(0,0,0,0.4);
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-size: 13px;
+                color: var(--cyan);
+            }
+            footer {
+                text-align: center;
+                padding: 24px;
+                color: var(--muted);
+                border-top: 1px solid var(--border);
+                font-size: 13px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="logo">
+                🛰️ ASTRA-HAR :: MISSION CONTROL
+            </div>
+            <div class="status-badge">● SYSTEM ONLINE (25 Hz Edge AI)</div>
+        </header>
+
+        <main>
+            <div class="hero">
+                <h1>ISRO SIH 2026 PS-26174</h1>
+                <p class="sub">Autonomous Space Payload Human Activity Recognition & Sequence Validation System</p>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>📹 Live Video Feed</h3>
+                    <p>Real-time camera feed annotated with 3D HAR action bounding boxes, skeleton pose keypoints, and hand motion vectors.</p>
+                    <a href="/video" target="_blank" class="btn">Open Live Camera Stream →</a>
+                </div>
+
+                <div class="card">
+                    <h3>🧠 AI Model Status</h3>
+                    <p>Active Model: <code>models/best_bilstm_model.keras</code><br>Spatial Resolution: <code>16x224x224x3</code></p>
+                    <a href="/api/models/status" target="_blank" class="btn btn-outline">Check Models API →</a>
+                </div>
+
+                <div class="card">
+                    <h3>⚡ System Telemetry</h3>
+                    <p>Queries live system health, camera connection, inference latency, CPU/GPU load, and database status.</p>
+                    <a href="/api/system/status" target="_blank" class="btn btn-outline">View Telemetry JSON →</a>
+                </div>
+
+                <div class="card">
+                    <h3>📚 Interactive API Documentation</h3>
+                    <p>Complete Swagger UI interactive REST API and WebSocket endpoint reference documentation.</p>
+                    <a href="/docs" target="_blank" class="btn btn-outline">Explore OpenAPI Docs →</a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            ISRO Smart India Hackathon (SIH) 2026 • Problem Statement 26174 • 100% Offline Edge Inference Engine
+        </footer>
+    </body>
+    </html>
+    """
 
 @app.get("/api/system/status")
 def get_system_status():

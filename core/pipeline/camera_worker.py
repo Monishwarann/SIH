@@ -18,6 +18,8 @@ from backend.voice.voice_engine import voice_manager
 from backend.recording.video_recorder import video_recorder
 from core.pipeline.multi_camera_manager import multi_camera_manager
 
+import collections
+
 logger = logging.getLogger("ASTRA-HAR.CameraWorker")
 
 class CameraWorker:
@@ -30,6 +32,7 @@ class CameraWorker:
         self.cap = None
         self.is_running = False
         self._thread = None
+        self.frame_buffer = collections.deque(maxlen=16)
 
         self.interaction_engine = InteractionEngine()
         self.activity_recognizer = ActivityRecognizer()
@@ -85,6 +88,7 @@ class CameraWorker:
 
             # Mirror frame horizontally for webcam usage
             frame = cv2.flip(frame, 1)
+            self.frame_buffer.append(frame)
             h, w = frame.shape[:2]
 
             # 1. Real-Time Person / Body Tracking from Frame Contours & Motion
@@ -110,8 +114,12 @@ class CameraWorker:
             # 5. Hand-Object Interaction Calculation
             interactions = self.interaction_engine.analyze(hands, objects)
 
-            # 6. Temporal Activity Classification
-            raw_act_info = self.activity_recognizer.predict({"keypoints": keypoints}, objects, interactions)
+            # 6. Temporal Activity Classification via Keras BiLSTM & Kinematic Engine
+            raw_act_info = self.activity_recognizer.predict(
+                {"keypoints": keypoints, "frame_buffer": list(self.frame_buffer)},
+                objects,
+                interactions
+            )
             raw_activity = raw_act_info.get("activity", "IDLE")
             raw_conf = raw_act_info.get("confidence", 0.94)
 

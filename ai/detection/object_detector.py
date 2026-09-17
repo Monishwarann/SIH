@@ -24,7 +24,8 @@ class ObjectDetector:
         """Loads local ONNX object detection model if available."""
         if self.model_path and os.path.exists(self.model_path):
             try:
-                import onnxruntime as ort
+                import importlib
+                ort = importlib.import_module("onnxruntime")
                 self.onnx_session = ort.InferenceSession(self.model_path)
                 logger.info(f"Loaded ONNX Object Detector from {self.model_path}")
             except Exception as e:

@@ -27,7 +27,8 @@ class PersonDetector:
         """Initialize local YOLO / ONNX edge detector model if weights exist."""
         if self.model_path and os.path.exists(self.model_path):
             try:
-                import onnxruntime as ort
+                import importlib
+                ort = importlib.import_module("onnxruntime")
                 self.onnx_session = ort.InferenceSession(self.model_path)
                 self.model_loaded = True
                 logger.info(f"Loaded ONNX Person Detector from {self.model_path}")

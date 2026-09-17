@@ -62,7 +62,8 @@ class ActionRecognizer:
 
         if target_path:
             try:
-                import tensorflow as tf
+                import importlib
+                tf = importlib.import_module("tensorflow")
                 self.model = tf.keras.models.load_model(target_path)
                 self.is_loaded = True
                 self.model_path = target_path

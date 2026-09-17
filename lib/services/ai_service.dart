@@ -61,4 +61,59 @@ class AIService {
     }
     return [];
   }
+
+  Future<Map<String, dynamic>> getModelsStatus() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/api/models/status'));
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      debugPrint('[AIService] Failed to fetch models status: $e');
+    }
+    return {'activity': 'LIVE (models/best_bilstm_model.keras)', 'device': 'CUDA / CPU Edge'};
+  }
+
+  Future<List<dynamic>> getRecordingsList() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/api/recordings/list'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['recordings'] ?? [];
+      }
+    } catch (e) {
+      debugPrint('[AIService] Failed to fetch recordings list: $e');
+    }
+    return [];
+  }
+
+  Future<Map<String, dynamic>> startLiveRecording() async {
+    try {
+      final response = await http.post(Uri.parse('$baseUrl/api/recording/live/start'));
+      return jsonDecode(response.body);
+    } catch (e) {
+      debugPrint('[AIService] Failed to start live recording: $e');
+      return {'status': 'ERROR'};
+    }
+  }
+
+  Future<Map<String, dynamic>> stopLiveRecording() async {
+    try {
+      final response = await http.post(Uri.parse('$baseUrl/api/recording/live/stop'));
+      return jsonDecode(response.body);
+    } catch (e) {
+      debugPrint('[AIService] Failed to stop live recording: $e');
+      return {'status': 'ERROR'};
+    }
+  }
+
+  Future<Map<String, dynamic>> exportLogs() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/api/logs/export'));
+      return jsonDecode(response.body);
+    } catch (e) {
+      debugPrint('[AIService] Failed to export logs: $e');
+      return {'status': 'ERROR'};
+    }
+  }
 }

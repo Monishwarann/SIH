@@ -79,11 +79,10 @@ def get_system_status():
         "mode": execution_mode,
         "camera": realtime_state.camera_status,
         "fps": realtime_state.fps,
-        "inference_latency_ms": realtime_state.inference_latency_ms,
-        "cpu_usage": realtime_state.cpu_usage,
-        "ram_usage_gb": realtime_state.ram_usage_gb,
-        "gpu_usage": realtime_state.gpu_usage,
-        "vram_usage_gb": realtime_state.vram_usage_gb,
+        "inference_latency_ms": realtime_state.total_latency_ms,
+        "cpu_usage": realtime_state.cpu_percent,
+        "ram_usage": realtime_state.ram_percent,
+        "gpu_usage": realtime_state.gpu_percent,
         "mission_health_score": realtime_state.mission_health_score,
         "database": db_service.get_db_info()
     }
@@ -98,8 +97,7 @@ def get_experiment_status():
 
 @app.post("/api/experiment/start")
 def start_experiment():
-    realtime_state.is_running = True
-    realtime_state.is_paused = False
+    realtime_state.experiment_status = "RUNNING"
     realtime_state.session_id = f"EXP_{int(time.time())}"
     db_service.log_session_start(realtime_state.session_id, realtime_state.experiment_id, realtime_state.total_steps)
     voice_manager.success("Experiment started. Position yourself facing the container.")
@@ -119,14 +117,14 @@ def stop_camera():
 
 @app.post("/api/experiment/stop")
 def stop_experiment():
-    realtime_state.is_running = False
+    realtime_state.experiment_status = "STOPPED"
     voice_manager.speak("Experiment stopped.")
     return {"status": "STOPPED"}
 
 @app.post("/api/experiment/reset")
 def reset_experiment():
     realtime_state.current_step = 1
-    realtime_state.step_progress = 0.0
+    realtime_state.progress_pct = 0.0
     realtime_state.safety_state = "CONFIRMED"
     realtime_state.active_alert = None
     voice_manager.speak("Experiment sequence reset to step 1.")
@@ -138,9 +136,9 @@ def get_current_step():
         "current_step": realtime_state.current_step,
         "total_steps": realtime_state.total_steps,
         "step_name": realtime_state.step_name,
-        "step_status": realtime_state.step_status,
-        "progress_pct": realtime_state.step_progress,
-        "next_step": realtime_state.next_step,
+        "step_status": realtime_state.safety_state,
+        "progress_pct": realtime_state.progress_pct,
+        "next_step": realtime_state.next_step_id,
         "next_step_name": realtime_state.next_step_name,
         "guidance": realtime_state.next_step_guidance
     }
@@ -160,12 +158,14 @@ def get_logs():
 @app.get("/api/models/status")
 def get_models_status():
     return {
-        "detector": "LIVE (YOLO / Lightweight Edge)",
-        "pose": "LIVE (MediaPipe / Normalized Keypoints)",
-        "activity": "LIVE (LSTM Temporal Sequence Model)",
-        "hmr_3d": "READY (3D Human Mesh Recovery Extension)",
+        "detector": "LIVE (YOLO / Lightweight Edge ONNX)",
+        "pose": "LIVE (MediaPipe / Kinematic Keypoints)",
+        "activity": "LIVE (Keras 3 BiLSTM: models/best_bilstm_model.keras)",
+        "model_path": "models/best_bilstm_model.keras",
+        "input_resolution": "16x224x224x3",
+        "hmr_3d": "READY (3D Spatial Position Mesh Recovery)",
         "device": "CUDA / Edge GPU Acceleration",
-        "precision": "FP16",
+        "precision": "FP32 / FP16",
         "p50_latency_ms": realtime_state.latency_p50,
         "p95_latency_ms": realtime_state.latency_p95,
         "p99_latency_ms": realtime_state.latency_p99

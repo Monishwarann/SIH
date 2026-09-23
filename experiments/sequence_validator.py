@@ -51,7 +51,8 @@ class SequenceValidator:
           'completed': bool
         }
         """
-        if self.is_completed or not self.steps:
+        if self.is_completed or not self.steps or self.current_step_idx >= len(self.steps):
+            self.is_completed = True
             return {
                 "status": "COMPLETED",
                 "current_step": len(self.steps),

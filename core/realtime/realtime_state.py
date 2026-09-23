@@ -208,8 +208,13 @@ class RealtimeState:
                 "current": self.current_activity,
                 "confidence": round(self.activity_confidence, 2),
                 "stable": self.activity_stable,
-                "duration_ms": self.activity_duration_ms
+                "duration_ms": self.activity_duration_ms,
+                "model": "best_bilstm_model.keras",
+                "model_status": "ACTIVE"
             },
+            "activity_name": self.current_activity,
+            "activity_confidence": round(self.activity_confidence, 2),
+            "action_model": "best_bilstm_model.keras",
 
             "objects": self.objects,
             "hands": self.hands,

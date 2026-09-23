@@ -74,7 +74,13 @@ export interface SystemState {
     confidence: number;
     stable: boolean;
     duration_ms: number;
+    model?: string;
+    model_status?: string;
   };
+
+  activity_name?: string;
+  activity_confidence?: number;
+  action_model?: string;
 
   objects: ExperimentObject[];
   hands: Record<string, HandInfo>;

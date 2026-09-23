@@ -97,8 +97,8 @@ export const AIModelStatus: React.FC = () => {
 
           <div className="bg-slate-950 border border-slate-800 p-3 rounded-lg flex items-center justify-between">
             <div>
-              <div className="font-bold text-white">Temporal Activity Model</div>
-              <div className="text-[11px] text-slate-400">PyTorch LSTM Sequence Model (models/activity_model.pt)</div>
+              <div className="font-bold text-white">Temporal Action Recognizer (BiLSTM)</div>
+              <div className="text-[11px] text-slate-400">EfficientNetB0 + BiLSTM (models/best_bilstm_model.keras, 7 Classes)</div>
             </div>
             <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">LOADED</span>
           </div>

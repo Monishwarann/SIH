@@ -16,6 +16,7 @@ from backend.database.db_service import db_service
 from backend.logging.logger_service import logger_service
 from backend.voice.voice_engine import voice_manager
 from backend.recording.video_recorder import video_recorder
+from ai.action_recognition import action_recognizer
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -360,15 +361,19 @@ def get_logs():
 
 @app.get("/api/models/status")
 def get_models_status():
+    bilstm_info = action_recognizer.get_status()
     return {
+        "bilstm": bilstm_info,
         "detector": "LIVE (YOLO / Lightweight Edge ONNX)",
         "pose": "LIVE (MediaPipe / Kinematic Keypoints)",
-        "activity": "LIVE (Keras 3 BiLSTM: models/best_bilstm_model.keras)",
-        "model_path": "models/best_bilstm_model.keras",
-        "input_resolution": "16x224x224x3",
+        "activity": f"LIVE (Keras 3 BiLSTM: {bilstm_info['model']})" if bilstm_info.get("loaded") else "OFFLINE",
+        "model_path": bilstm_info.get("model_path", "models/best_bilstm_model.keras"),
+        "input_resolution": bilstm_info.get("input_shape", "(1, 16, 224, 224, 3)"),
+        "classes": bilstm_info.get("num_classes", 7),
+        "class_labels": bilstm_info.get("classes", []),
         "hmr_3d": "READY (3D Spatial Position Mesh Recovery)",
-        "device": "CUDA / Edge GPU Acceleration",
-        "precision": "FP32 / FP16",
+        "device": "CPU / Edge GPU Fallback (Native Windows)",
+        "precision": "FP32 / uint8 input",
         "p50_latency_ms": realtime_state.latency_p50,
         "p95_latency_ms": realtime_state.latency_p95,
         "p99_latency_ms": realtime_state.latency_p99

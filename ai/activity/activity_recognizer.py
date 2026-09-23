@@ -48,16 +48,24 @@ class ActivityRecognizer:
                 evidence.append("[OK] Hand keypoints tracked")
 
         # Check direct model prediction from Keras BiLSTM model (best_bilstm_model.keras)
-        if frame_buffer and action_recognizer and action_recognizer.model is not None:
+        if frame_buffer and action_recognizer and action_recognizer.model is not None and action_recognizer.is_loaded:
             try:
                 keras_res = action_recognizer.predict_from_buffer(frame_buffer, keypoints, interactions)
-                if keras_res and keras_res.get("activity") and keras_res.get("activity") != "WAIT":
+                if keras_res and keras_res.get("status") == "ACTIVE":
                     act = keras_res.get("activity")
                     conf = keras_res.get("confidence", 0.95)
                     evidence.append(f"[OK] Keras BiLSTM Model Inference ({act} @ {int(conf*100)}%)")
+                    
+                    if act != self.active_activity:
+                        self.active_activity = act
+                        self.activity_start_time = now
+
                     return {
                         "activity": act,
                         "confidence": conf,
+                        "class_index": keras_res.get("class_index", -1),
+                        "probabilities": keras_res.get("probabilities", {}),
+                        "model": "best_bilstm_model.keras",
                         "duration_sec": round(now - self.activity_start_time, 2),
                         "target_object": keras_res.get("target_object", ""),
                         "evidence": evidence

@@ -223,6 +223,37 @@ sih/
 | `15` | `WAIT` | Idle waiting state between protocol steps | Workstation |
 | `16` | `COMPLETE_STEP` | Explicit confirmation of protocol step completion | Experiment Unit |
 
+## 🧠 BiLSTM Action Recognition
+
+The system uses the trained `best_bilstm_model.keras` model for temporal action recognition.
+
+### Pipeline:
+```text
+Video Frame
+→ Frame Buffer (16 frames)
+→ Object Detection (YOLO / ONNX)
+→ Pose/Hand Analysis (MediaPipe / OpenCV)
+→ BiLSTM Action Recognition (best_bilstm_model.keras)
+→ Sequence Validation (FSM Engine)
+→ WebSocket Telemetry
+→ Mission Control Dashboard
+```
+
+- **Model**: `models/best_bilstm_model.keras` (`EfficientNetB0_BiLSTM_Model`)
+- **Input**: `(1, 16, 224, 224, 3)` uint8 RGB frame sequence (16 frames, 224×224)
+- **Output**: `(1, 7)` softmax probability distribution across 7 action classes
+- **Classes**:
+  1. `APPROACH_OBJECT`
+  2. `IDENTIFY_OBJECT`
+  3. `REACH_OBJECT`
+  4. `PICK_OBJECT`
+  5. `HOLD_OBJECT`
+  6. `MOVE_OBJECT`
+  7. `PLACE_OBJECT`
+  *(Configurable dynamically via `models/classes_7.json`)*
+- **Preprocessing**: Automatic BGR-to-RGB conversion, resize to 224×224, and built-in model rescaling (1/255.0) with EfficientNetB0 feature extraction.
+- **Hardware Compatibility**: Runs natively on CPU (AVX2 / oneDNN) with zero cloud latency (<45 ms per clip) and automatic GPU delegation where available.
+
 ---
 
 ## 📊 Model Benchmarks & Evaluation

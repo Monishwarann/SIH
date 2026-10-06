@@ -24,38 +24,43 @@ class ActivityFusionEngine:
         if not hands or not objects:
             return interactions
 
-        right_hand = hands.get("right_hand", {})
-        rx, ry = right_hand.get("position", [0, 0])
+        for hand_label in ["right_hand", "left_hand"]:
+            hand_info = hands.get(hand_label, {})
+            if not hand_info:
+                continue
+            hx, hy = hand_info.get("position", [0, 0])
+            if hx == 0 and hy == 0:
+                continue
 
-        for obj in objects:
-            oid = obj.get("id", "")
-            oname = obj.get("name", "Object")
-            bbox = obj.get("bbox", [0, 0, 0, 0])
+            for obj in objects:
+                oid = obj.get("id", "")
+                oname = obj.get("name", "Object")
+                bbox = obj.get("bbox", [0, 0, 0, 0])
 
-            # Calculate centroid of object bounding box
-            cx = (bbox[0] + bbox[2]) // 2
-            cy = (bbox[1] + bbox[3]) // 2
+                # Calculate centroid of object bounding box
+                cx = (bbox[0] + bbox[2]) // 2
+                cy = (bbox[1] + bbox[3]) // 2
 
-            # Euclidean distance from hand to object centroid
-            dist = math.sqrt((rx - cx)**2 + (ry - cy)**2)
+                # Euclidean distance from hand to object centroid
+                dist = math.sqrt((hx - cx)**2 + (hy - cy)**2)
 
-            if dist < 45:
-                state = "GRASPED"
-            elif dist < 85:
-                state = "CONTACT"
-            elif dist < 160:
-                state = "PROXIMITY"
-            else:
-                state = "FAR"
+                if dist < 45:
+                    state = "GRASPED"
+                elif dist < 85:
+                    state = "CONTACT"
+                elif dist < 160:
+                    state = "PROXIMITY"
+                else:
+                    state = "FAR"
 
-            interactions.append({
-                "object_id": oid,
-                "object_name": oname,
-                "distance_px": round(dist, 1),
-                "state": state,
-                "hand": "right_hand",
-                "object_bbox": bbox
-            })
+                interactions.append({
+                    "object_id": oid,
+                    "object_name": oname,
+                    "distance_px": round(dist, 1),
+                    "state": state,
+                    "hand": hand_label,
+                    "object_bbox": bbox
+                })
 
         # Sort by distance
         interactions.sort(key=lambda x: x["distance_px"])

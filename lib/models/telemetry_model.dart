@@ -116,6 +116,38 @@ class TelemetryData {
 
   SafetyStatus get safetyStatus => SafetyStatus.fromCode(status);
 
+  TelemetryData copyWith({
+    String? timestamp,
+    String? activity,
+    double? confidence,
+    double? fps,
+    double? latencyMs,
+    String? experiment,
+    int? currentStep,
+    int? totalSteps,
+    String? status,
+    String? alertMessage,
+    bool? poseDetected,
+    int? handsDetected,
+    List<DetectedObject>? objects,
+  }) {
+    return TelemetryData(
+      timestamp: timestamp ?? this.timestamp,
+      activity: activity ?? this.activity,
+      confidence: confidence ?? this.confidence,
+      fps: fps ?? this.fps,
+      latencyMs: latencyMs ?? this.latencyMs,
+      experiment: experiment ?? this.experiment,
+      currentStep: currentStep ?? this.currentStep,
+      totalSteps: totalSteps ?? this.totalSteps,
+      status: status ?? this.status,
+      alertMessage: alertMessage ?? this.alertMessage,
+      poseDetected: poseDetected ?? this.poseDetected,
+      handsDetected: handsDetected ?? this.handsDetected,
+      objects: objects ?? this.objects,
+    );
+  }
+
   factory TelemetryData.fromJson(Map<String, dynamic> json) {
     var rawObjects = json['objects'] as List? ?? [];
     List<DetectedObject> objs =

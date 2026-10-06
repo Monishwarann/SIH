@@ -57,13 +57,26 @@ class SequenceEngine:
             return False, self.get_current_step_info(), None
 
         step = self.steps[self.current_step_index]
-        expected_act = step.get("expected_activity")
-        expected_obj = step.get("expected_object")
+        expected_act = step.get("expected_activity", "")
+        expected_obj = step.get("expected_object", "")
         thresh = step.get("confidence_threshold", 0.75)
+        timeout_sec = step.get("timeout_sec", 30.0)
+        elapsed = time.time() - self.step_start_time
+
+        alert_event = None
+
+        # Check timeout hazard
+        if elapsed > timeout_sec:
+            alert_event = {
+                "type": EventType.TIMEOUT_WARNING,
+                "message": f"Step '{step.get('name')}' exceeded limit of {timeout_sec}s",
+                "step_id": step.get("id")
+            }
+            event_bus.publish(EventType.TIMEOUT_WARNING, alert_event)
 
         # Check match
         act_match = (expected_act.lower() in current_activity.lower()) or (current_activity.lower() in expected_act.lower())
-        obj_match = (expected_obj == active_object) or (active_object == "")
+        obj_match = (expected_obj == active_object) or (active_object == "") or not expected_obj
 
         if act_match and confidence >= thresh:
             # Advance step
@@ -77,9 +90,9 @@ class SequenceEngine:
                 "next_step": new_step_info.get("step_number")
             })
 
-            return True, new_step_info, None
+            return True, new_step_info, alert_event
 
-        return False, self.get_current_step_info(), None
+        return False, self.get_current_step_info(), alert_event
 
     def set_step(self, step_id: int):
         """Force set current step ID."""

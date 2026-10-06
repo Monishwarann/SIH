@@ -204,7 +204,8 @@ export const useRealtimeStore = create<RealtimeStore>((set, get) => ({
 
   exportLogs: async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/logs/export`);
+      const apiHost = window.location.hostname || "localhost";
+      const res = await fetch(`http://${apiHost}:8000/api/logs/export`);
       return await res.json();
     } catch (e) {
       console.warn("Failed to export logs from backend", e);
@@ -214,7 +215,8 @@ export const useRealtimeStore = create<RealtimeStore>((set, get) => ({
 
   startLiveRecording: async () => {
     try {
-      await fetch(`${API_BASE}/api/recording/live/start`, { method: "POST" });
+      const apiHost = window.location.hostname || "localhost";
+      await fetch(`http://${apiHost}:8000/api/recording/live/start`, { method: "POST" });
     } catch (e) {
       console.warn("Backend offline when starting recording", e);
     }
@@ -223,7 +225,8 @@ export const useRealtimeStore = create<RealtimeStore>((set, get) => ({
 
   stopLiveRecording: async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/recording/live/stop`, { method: "POST" });
+      const apiHost = window.location.hostname || "localhost";
+      const res = await fetch(`http://${apiHost}:8000/api/recording/live/stop`, { method: "POST" });
       const data = await res.json();
       set({ isRecording: false });
       return data;
@@ -236,7 +239,8 @@ export const useRealtimeStore = create<RealtimeStore>((set, get) => ({
 
   fetchRecordings: async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/recordings/list`);
+      const apiHost = window.location.hostname || "localhost";
+      const res = await fetch(`http://${apiHost}:8000/api/recordings/list`);
       const data = await res.json();
       return data.recordings || [];
     } catch (e) {
@@ -246,7 +250,8 @@ export const useRealtimeStore = create<RealtimeStore>((set, get) => ({
   },
 
   connectWebSocket: () => {
-    const wsUrl = `ws://${window.location.hostname}:8000/ws/experiment`;
+    const apiHost = window.location.hostname || "localhost";
+    const wsUrl = `ws://${apiHost}:8000/ws/experiment`;
     let ws: WebSocket | null = null;
 
     try {

@@ -105,9 +105,18 @@ class ActionRecognizer:
             except Exception:
                 pass
 
-            import keras
+            try:
+                import keras
+                load_model = keras.models.load_model
+            except ImportError:
+                try:
+                    import tensorflow as tf
+                    load_model = tf.keras.models.load_model
+                except ImportError:
+                    raise ImportError("Neither 'keras' nor 'tensorflow' package is available.")
+
             # Load with compile=False for pure inference
-            self.model = keras.models.load_model(str(target_path), compile=False)
+            self.model = load_model(str(target_path), compile=False)
             self.is_loaded = True
             self.model_path = str(target_path)
             self.load_error = None
@@ -255,8 +264,10 @@ class ActionRecognizer:
 
         # Fallback to kinematic feature classifier if model could not run
         act, conf, target_obj = self._classify_kinematic_features(frames, keypoints, interactions)
-        probs = {c: 0.02 for c in self.classes}
-        probs[act] = conf
+        num_others = max(1, len(self.classes) - 1)
+        other_prob = round((1.0 - conf) / num_others, 4)
+        probs = {c: other_prob for c in self.classes}
+        probs[act] = round(conf, 4)
 
         return {
             "activity": act,

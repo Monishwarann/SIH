@@ -43,20 +43,34 @@ ASTRA-HAR operates **100% offline on local edge hardware** to:
 - **Ultra-Low Latency**: End-to-end inference & validation loop completes in **<30 ms**.
 - **Edge Hardware Optimized**: Runs on Intel i5/i7 laptops, NVIDIA RTX/Jetson edge units, and Windows workstation hardware.
 
-### 🎥 2. Multi-Camera 3D Spatial Fusion Engine
-- Ingests multiple synchronized camera angles to eliminate occlusion in microgravity environments.
-- Interactive **Radar Spatial Overlay** visualizing 3D hand-object proximity and velocity vectors in real time.
+### 🎥 2. Multi-Camera 3D Spatial Fusion Engine & 4x4 Coordinate Transforms
+- **Multi-Camera Triangulation**: Ingests and synchronizes multiple camera streams to eliminate microgravity line-of-sight occlusion via least-squares 3D triangulation.
+- **Rigid Body Transforms & Quaternions**: Employs 4x4 matrix transformation pipelines (`CoordinateFrame`) with SE(3) rotation matrices and unit quaternion conversions.
+- **Radar Spatial HUD**: Real-time 2D/3D radar overlay plotting spatial hand-object proximity and velocity vectors.
 
-### 🧠 3. Dual GUI Mission Control Center
-- **Flutter 3.44 Desktop Application**: Windows-native app featuring high-DPI scientific HUDs, dark aerospace theme, live video canvas, and offline DB query tools.
+### 👐 3. Dual-Hand Spatial Kinematics & Interaction Engine
+- **Dual-Hand Tracking**: Independent spatial tracking for left and right hands with MediaPipe Pose keypoints, joint angle kinematics, and wrist velocity vectors.
+- **Posture Stability Index (PSI)**: Continuously evaluates astronaut body balance and ergonomic stance during microgravity operations.
+- **Dynamic Grasp & Proximity Scoring**: Computes 3D Euclidean distances, relative velocity vectors, and confidence-weighted grasp scores with complete state transition audit logging.
+
+### ⏱️ 4. Automated Step Timeout Detection & FSM Event Bus
+- **Dynamic Step Watchdogs**: Enforces configurable per-step time windows (`min_duration`, `max_duration`) to prevent protocol stalls.
+- **Event Bus Alert Publishing**: Instantly publishes timeout hazard events to the central event system, triggering voice alerts and dashboard warnings.
+
+### 🌐 5. Dynamic Host Discovery & Network Resilience
+- **Zero-Config Endpoint Fallback**: Automatic dynamic host discovery for WebSockets and REST API endpoints across Flutter Desktop and React Web clients.
+- **Self-Healing Connectivity**: Adaptive exponential backoff reconnection logic guarantees uninterrupted telemetry streaming during network re-configurations.
+
+### 🧠 6. Dual GUI Mission Control Center
+- **Flutter 3.44 Desktop Application**: Windows-native app featuring high-DPI scientific HUDs, dark aerospace theme, live video canvas, state copy helpers (`copyWith`), and offline DB query tools.
 - **React 18 Scientific Web Dashboard**: Vite-powered mission control web suite with session replay, live telemetry charts, and interactive diagnostic studio.
 
-### 🗣️ 4. Asynchronous Offline Voice Assistant
+### 🗣️ 7. Asynchronous Offline Voice Assistant
 - Instant real-time text-to-speech spoken warnings (`"Warning: Step 3 skipped! Please return sample container"`).
 - Non-blocking asynchronous thread worker ensures audio playback never stalls camera frame ingestion.
 
-### 📊 5. Automated Protocol Exporter & Mission Log Generator
-- Generates post-experiment verification certificates with step timing breakdown, safety scores, anomaly timelines, and raw telemetry export.
+### 📊 8. Automated Protocol Exporter & Mission Log Generator
+- Generates post-experiment verification certificates with step timing breakdown, safety scores, anomaly timelines, and raw telemetry export (SQLite, JSON, CSV, PDF).
 
 ---
 
